@@ -24,13 +24,13 @@ public class XposedMod implements IXposedHookLoadPackage {
 			@Override
 			protected void afterHookedMethod(MethodHookParam param) throws Throwable {
 				PackageInfo info = (PackageInfo) param.args[0];
-				View mRootView = (View) XposedHelpers.getObjectField(param.thisObject, "mRootView");
-				Resources res = mRootView.getResources();
+				Object mHeader = XposedHelpers.getObjectField(param.thisObject, "mHeader");
+				Resources res = (Resources) XposedHelpers.callMethod(param.thisObject, "getResources");
 
 				int appSnippetId = res.getIdentifier("app_snippet", "id", "com.android.settings");
-				View appSnippet = mRootView.findViewById(appSnippetId);
+				View appSnippet = (View) XposedHelpers.callMethod(mHeader, "findViewById", appSnippetId);
 
-				int iconId = res.getIdentifier("app_icon", "id", "com.android.settings");
+				int iconId = res.getIdentifier("icon", "id", "android");
 				ImageView icon = (ImageView) appSnippet.findViewById(iconId);
 
 				final String packageName = info.packageName;
